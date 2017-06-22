@@ -1,0 +1,80 @@
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+
+
+static int semid=-1; // identifiant du sémaphore. Si le sémaphore a déja été crée le sémaphore renvoie -1
+
+union semun{ // On crée la structure pour ensuite pouvoir manipuler les sémaphores. Ne rentre PAS en compte dans la création. Sert pour utiliser semctl
+int val ; // pour SETVAL
+struct semid_ds *buf ; // pour IPC_SET et IPC_STAT
+ushort_t *array ; // pour GETALL et SETALL
+} ;
+
+int init_semaphore(){              // fonction pour initialiser un sémaphore.
+int i;
+union semun argo;
+argo.val=0;            //on initialiser les attributs de la structure
+argo.buf->NULL;
+
+if (semid !=-1) {           // si semid est différent de -1, cela signifie qu'un sémaphore a déja été crée et que semid a pris la valeur de l'identifiant du sémaphore.
+  printf ("Sémaphore déja crée");
+return -1;
+}
+else if (semid=semget(IPC_PRIVATE,N_SEM,0600) == -1) {
+  fprintf(sterr,"%d création échouée",errno);
+  return (-2);
+}
+
+for (i=0; i<N_SEM;i++)
+{
+  semctl(semid,i,SETVAL,argo);       // on initialise tout les sémaphores. On les distingues via leur SEMNUM, qui est i. Structure importante, on initialise
+                                     // que de cette façon les sémaphores (je pense).
+return 0;                             // On retourne 0 car on a bien crée les sémaphores + initialisation
+}
+}
+
+int detruire_semaphore (void){
+  if (semid ==-1){
+    printf("aucun semaphore initialise \n");
+    return -1;
+  }
+  int status;
+  if (status =semctl(semid,N_SEM, IPC_RMD)!=-1)   //pourquoi est-ce que l'on remet semid à -1? Suffisant pour détruire le sémaphore?
+  {
+    semid=-1;
+    return status;
+  }
+  return 0;
+}
+
+int val_sem(int sem, int val){
+  if (semid ==-1) return -1;
+  struct semun argv;
+  argv.val=val;
+  if ( sem <0 || sem > N_SEM)
+  {
+    printf ("le sémaphore n'existe pas !");
+    return -1;
+    if ((semctl(semid,sem,SETVAL,argv) ==-1) return -2;
+
+  }
+
+return 0;
+}
+/*
+struct sembuf {
+     unsigned short int sem_num;    // #sémaphore ciblé
+     short              sem_op;    //opération du sémaphore. La valeur de sem_op
+     short              sem_flg;    //flags de l'opération
+ };*/
+static struct sembuf op_p (-1,-1,0);
+static struct sembuf op_v (-1,1,0);
+
+/*
+  sembuf* A= malloc( sizeof(sembuf));
+  A->sem_num=
+  if () return -1;
+  else return 0;
+
+*/

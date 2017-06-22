@@ -1,0 +1,29 @@
+Init (em_ect,1), init (tour,1)
+init(fichier,1)
+
+
+
+
+P(em_ect)
+
+ne=ne+1
+
+si (ne=1) alors P(tour)
+
+V(em_ect)
+
+P(fichier)
+
+<ECRIRE>
+
+V(fichier)
+
+P(em_ect)
+
+ne=ne-2
+
+Si ne=0 alors
+
+V(tour)
+
+V(em_ect)

@@ -1,0 +1,17 @@
+//EX3
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+
+
+pid_t pid;
+
+pid=fork();
+char* buffer[5]
+if(pid == 0)
+{
+
+
+
+}
